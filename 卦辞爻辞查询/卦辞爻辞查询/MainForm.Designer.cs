@@ -1,5 +1,5 @@
 ﻿namespace 卦辞爻辞查询
-{
+{ 
     partial class MainForm
     {
         /// <summary>

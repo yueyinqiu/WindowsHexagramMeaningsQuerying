@@ -3,7 +3,7 @@ using System.Linq;
 using 周易;
 
 namespace 卦辞爻辞查询
-{
+{ 
     public partial class MainForm : System.Windows.Forms.Form
     {
         public MainForm()
