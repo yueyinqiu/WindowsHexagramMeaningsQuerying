@@ -1,12 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using 周易;
 
-namespace 卦辞爻辞查询
-{ 
-    public partial class MainForm : System.Windows.Forms.Form
+namespace HexagramMeaningsQuerying
+{
+    public partial class Form1 : Form
     {
-        public MainForm()
+        public Form1()
         {
             this.InitializeComponent();
             this.RandomHexagram(null, null);
@@ -77,7 +84,7 @@ namespace 卦辞爻辞查询
         private readonly Random random = new Random();
         private void RandomHexagram(object sender, EventArgs e)
         {
-            this.NameBox.Text = 
+            this.NameBox.Text =
                 别卦.全部别卦卦名.ElementAt(this.random.Next(0, 63));
             this.GetByName(null, null);
         }
