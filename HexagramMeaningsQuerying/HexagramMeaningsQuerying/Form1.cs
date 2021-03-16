@@ -7,38 +7,41 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using 周易;
+using YiJingFramework.Core;
+using YiJingFramework.References.Zhouyi;
 
 namespace HexagramMeaningsQuerying
 {
     public partial class Form1 : Form
     {
+        readonly Zhouyi zhouyi = new Zhouyi();
         public Form1()
         {
             this.InitializeComponent();
             this.RandomHexagram(null, null);
         }
 
-        private void Show(别卦 hexagram)
+        private void Show(ZhouyiHexagram hexagram)
         {
-            this.NameBox.Text = hexagram.卦名;
-            this.PaintingBox.Text = hexagram.卦画.ToString();
-            this.LowerBox.Text = hexagram.主卦.卦名.ToString();
-            this.UpperBox.Text = hexagram.客卦.卦名.ToString();
+            this.NameBox.Text = hexagram.Name;
+            this.PaintingBox.Text = hexagram.GetPainting().ToString();
+            this.LowerBox.Text = hexagram.LowerTrigram.Name;
+            this.UpperBox.Text = hexagram.UpperTrigram.Name;
             this.MeaningsBox.Text = hexagram.ToString();
         }
         private void GetByPainting(object sender, EventArgs e)
         {
-            if (!卦画.TryParse(this.PaintingBox.Text, out var painting))
+            if (!Painting.TryParse(this.PaintingBox.Text, out var painting))
             {
                 this.MeaningsBox.Text = "请正确输入。";
                 return;
             }
-            if (!别卦.获取别卦(painting, out var hexagram))
+            if (painting.Count != 6)
             {
                 this.MeaningsBox.Text = "请输入六根爻。";
                 return;
             }
+            var hexagram = zhouyi.GetHexagram(painting);
             this.Show(hexagram);
         }
 
@@ -51,7 +54,7 @@ namespace HexagramMeaningsQuerying
 
         private void GetByName(object sender, EventArgs e)
         {
-            if (!别卦.获取别卦(CutName(this.NameBox.Text), out var hexagram))
+            if (!zhouyi.TryGetHexagram(CutName(this.NameBox.Text), out var hexagram))
             {
                 this.MeaningsBox.Text = "未找到此卦。";
                 return;
@@ -62,31 +65,32 @@ namespace HexagramMeaningsQuerying
         private void GetByTwoTrigrams(object sender, EventArgs e)
         {
             var lname = CutName(this.LowerBox.Text);
-            if (lname.Length != 1 || !经卦.获取经卦(lname[0], out var l))
+            if (lname.Length != 1 || !zhouyi.TryGetTrigram(lname, out var l))
             {
                 this.MeaningsBox.Text = "未找到指定主卦。";
                 return;
             }
             var uname = CutName(this.UpperBox.Text);
-            if (uname.Length != 1 || !经卦.获取经卦(uname[0], out var u))
+            if (uname.Length != 1 || !zhouyi.TryGetTrigram(uname, out var u))
             {
                 this.MeaningsBox.Text = "未找到指定客卦。";
                 return;
             }
-            if (!别卦.获取别卦(l, u, out var hexagram))
-            {
-                this.MeaningsBox.Text = "未知错误。";
-                return;
-            }
-            this.Show(hexagram);
+            Painting painting = new Painting(l.GetPainting().Concat(u.GetPainting()));
+            this.Show(zhouyi.GetHexagram(painting));
         }
 
         private readonly Random random = new Random();
         private void RandomHexagram(object sender, EventArgs e)
         {
-            this.NameBox.Text =
-                别卦.全部别卦卦名.ElementAt(this.random.Next(0, 63));
-            this.GetByName(null, null);
+            var painting = new Painting(
+                (LineAttribute)random.Next(0, 2),
+                (LineAttribute)random.Next(0, 2),
+                (LineAttribute)random.Next(0, 2),
+                (LineAttribute)random.Next(0, 2),
+                (LineAttribute)random.Next(0, 2),
+                (LineAttribute)random.Next(0, 2));
+            this.Show(zhouyi.GetHexagram(painting));
         }
     }
 }
