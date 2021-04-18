@@ -14,7 +14,7 @@ namespace HexagramMeaningsQuerying
 {
     public partial class Form1 : Form
     {
-        readonly Zhouyi zhouyi = new Zhouyi();
+        readonly Zhouyi zhouyi = new Zhouyi("zhouyi.json");
         public Form1()
         {
             this.InitializeComponent();
